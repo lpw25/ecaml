@@ -56,8 +56,8 @@ and plain_term =
   (** [fun p -> t] *)
   | Apply of term * term
   (** [t1 t2] *)
-  | Perform of effect
-  (** [perform E] *)
+  | Perform of effect * term
+  (** [perform E t] *)
   | Match of term * cases
   (** [match t1 with t2] *)
 

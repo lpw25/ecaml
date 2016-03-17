@@ -8,10 +8,10 @@ type t =
 
 let print c ppf =
   match c with
-  | Integer k -> Format.fprintf ppf "%d" k
-  | String s -> Format.fprintf ppf "%S" s
-  | Boolean b -> Format.fprintf ppf "%B" b
-  | Float f -> Format.fprintf ppf "%F" f
+  | Integer k -> Print.print ppf "%d" k
+  | String s -> Print.print ppf "%S" s
+  | Boolean b -> Print.print ppf "%B" b
+  | Float f -> Print.print ppf "%F" f
 
 let of_integer n = Integer n
 let of_string s = String s

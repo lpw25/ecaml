@@ -1,16 +1,7 @@
 (** Pretty-printing functions *)
 
-(** Print an error to the standard error channel. *)
-val error : ?loc:Location.t -> string -> ('a, Format.formatter, unit) format -> 'a
-
-(** Print a check to the standard error channel. *)
-val check : ?loc:Location.t -> ('a, Format.formatter, unit) format -> 'a
-
-(** Print a warning to the standard error channel. *)
-val warning : ?loc:Location.t -> ('a, Format.formatter, unit) format -> 'a
-
-(** Print a debug message to the standard error channel. *)
-val debug : ?loc:Location.t -> ('a, Format.formatter, unit) format -> 'a
+(** Print a message to the standard error channel. *)
+val message : ?loc:Location.t -> header:string -> ('a, Format.formatter, unit) format -> 'a
 
 (** Print a construct to a given formatter, possibly parenthesizing it. *)
 val print :

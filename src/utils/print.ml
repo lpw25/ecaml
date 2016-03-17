@@ -1,20 +1,9 @@
 (** Pretty-printing functions *)
 
-let message ~verbosity ?loc ~header fmt =
-  if verbosity <= !Config.verbosity then
-    match loc with
-    | None -> Format.eprintf ("%s:@," ^^ fmt ^^ "@.") header
-    | Some loc -> Format.eprintf ("%s (%t):@," ^^ fmt ^^ "@.") header (Location.print loc)
-  else
-    Format.ifprintf Format.err_formatter fmt
-
-let error ?loc err_kind fmt = message ~verbosity:1 ?loc ~header:err_kind fmt
-
-let check ?loc fmt = message ~verbosity:2 ?loc ~header:"Check" fmt
-
-let warning ?loc fmt = message ~verbosity:3 ?loc ~header:"Warning" fmt
-
-let debug ?loc fmt = message ~verbosity:4 ?loc ~header:"Debug" fmt
+let message ?loc ~header fmt =
+  match loc with
+  | None -> Format.eprintf ("%s:@," ^^ fmt ^^ "@.") header
+  | Some loc -> Format.eprintf ("%s (%t):@," ^^ fmt ^^ "@.") header (Location.print loc)
 
 let print ?(at_level=min_int) ?(max_level=max_int) ppf =
   if at_level <= max_level then

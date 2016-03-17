@@ -3,7 +3,7 @@
 type t = Location.t * string * string
 
 let print (loc, error_kind, msg) =
-  Print.error ~loc error_kind "%s" msg
+  Print.message ~loc ~header:error_kind "%s" msg
 
 exception Error of t
 
