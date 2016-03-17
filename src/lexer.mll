@@ -2,54 +2,17 @@
   open Parser
 
   let reserved = [
-    ("and", AND);
-    ("as", AS);
-    ("asr", ASR);
-    ("begin", BEGIN);
-    ("check", CHECK);
-    ("do", DO);
-    ("done", DONE);
-    ("downto", DOWNTO);
     ("effect", EFFECT);
     ("else", ELSE);
-    ("end", END);
-    ("external", EXTERNAL);
     ("false", BOOL false);
-    ("finally", FINALLY);
-    ("for", FOR);
     ("fun", FUN);
-    ("function", FUNCTION);
-    ("handle", HANDLE);
-    ("handler", HANDLER);
     ("if", IF);
     ("in", IN);
-    ("land", LAND);
     ("let", LET);
-    ("lor", LOR);
-    ("lsl", LSL);
-    ("lsr", LSR);
-    ("lxor", LXOR);
     ("match", MATCH);
-    ("mod", MOD);
-    ("new", NEW);
-    ("of", OF);
-    ("operation", OPERATION);
-    ("or", OR);
-    ("rec", REC);
     ("then", THEN);
-    ("to", TO);
     ("true", BOOL true);
-    ("type", TYPE);
-    ("val", VAL);
-    ("while", WHILE);
     ("with", WITH)
-  ]
-
-  let directives = [
-    ("help", HELP);
-    ("reset", RESET);
-    ("quit", QUIT);
-    ("use", USE);
   ]
 
   let escaped_characters = [
@@ -124,6 +87,7 @@ rule token = parse
   | uname               { UNAME (Lexing.lexeme lexbuf) }
   | '\'' lname          { let str = Lexing.lexeme lexbuf in
                           PARAM (String.sub str 1 (String.length str - 1)) }
+  | "\'~"               { PARAM ("~") }
   | '_'                 { UNDERSCORE }
   | '('                 { LPAREN }
   | ')'                 { RPAREN }

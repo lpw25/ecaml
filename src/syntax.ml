@@ -39,6 +39,7 @@ and plain_pattern =
   | Var of variable
   | Const of Const.t
   | Tuple of pattern list
+  | Constraint of pattern * ty
 
 (** Terms *)
 type term = {
@@ -60,6 +61,8 @@ and plain_term =
   (** [perform E t] *)
   | Match of term * cases
   (** [match t1 with t2] *)
+  | Constraint of term * ty
+  (** [(t : ty)] *)
 
 and cases = {
   effects : (effect, abstraction2) Map.t;
