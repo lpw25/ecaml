@@ -1,12 +1,22 @@
 (** Abstract syntax of ecaml terms and types. *)
 
 (** Symbols *)
-type variable   (** variable identifiers *)
-type effect     (** effect symbols *)
-type label      (** variant labels *)
-type tyname     (** type names *)
-type typaram    (** type parameters *)
-type rowparam   (** row parameters *)
+type variable = private string   (** variable identifiers *)
+type effect = private string     (** effect symbols *)
+type label = private string      (** variant labels *)
+type tyname = private string     (** type names *)
+type typaram = private string    (** type parameters *)
+type rowparam = private string   (** row parameters *)
+
+val variable : string -> variable
+val effect : string -> effect
+val label : string -> label
+val tyname : string -> tyname
+val typaram : string -> typaram
+val rowparam : string -> rowparam
+
+type 'a loc =
+  { plain : 'a; location : Location.t }
 
 (** Types *)
 type dirt = {
@@ -14,10 +24,8 @@ type dirt = {
   row : rowparam option;
 }
 
-type ty = {
-  ty: plain_ty;
-  location: Location.t;
-}
+type ty = plain_ty loc
+
 and plain_ty =
   | TyParam of typaram
   (** ['a] *)
@@ -30,36 +38,29 @@ and plain_ty =
 
 
 (** Patterns *)
-type pattern = {
-  pattern: plain_pattern;
-  location: Location.t;
-}
+type pattern = plain_pattern loc
+
 and plain_pattern =
   | Nonbinding
   | Var of variable
   | Const of Const.t
   | Tuple of pattern list
+  | Constraint of pattern * ty
 
 (** Terms *)
-type term = {
-  term: plain_term;
-  location: Location.t;
-}
+type term = plain_term loc
+
 and plain_term =
   | Var of variable
-  (** variables *)
   | Const of Const.t
-  (** integers, booleans, ... *)
   | Tuple of term list
-  (** [(t1, t2, ..., tn)] *)
   | Lambda of abstraction
-  (** [fun p -> t] *)
   | Apply of term * term
-  (** [t1 t2] *)
+  | Conditional of term * term * term
   | Perform of effect * term
-  (** [perform E t] *)
   | Match of term * cases
-  (** [match t1 with t2] *)
+  | Let of pattern * term * term
+  | Constraint of term * ty
 
 and cases = {
   effects : (effect, abstraction2) Map.t;

@@ -8,16 +8,24 @@ type tyname = string     (** type names *)
 type typaram = string    (** type parameters *)
 type rowparam = string   (** row parameters *)
 
+let variable s = s
+let effect s = s
+let label s = s
+let tyname s = s
+let typaram s = s
+let rowparam s = s
+
 (** Types *)
 type dirt = {
   operations : effect list;
   row : rowparam option;
 }
 
-type ty = {
-  ty: plain_ty;
-  location: Location.t;
-}
+type 'a loc =
+  { plain : 'a; location : Location.t }
+
+type ty = plain_ty loc
+
 and plain_ty =
   | TyParam of typaram
   (** ['a] *)
@@ -30,10 +38,8 @@ and plain_ty =
 
 
 (** Patterns *)
-type pattern = {
-  pattern: plain_pattern;
-  location: Location.t;
-}
+type pattern = plain_pattern loc
+
 and plain_pattern =
   | Nonbinding
   | Var of variable
@@ -42,27 +48,19 @@ and plain_pattern =
   | Constraint of pattern * ty
 
 (** Terms *)
-type term = {
-  term: plain_term;
-  location: Location.t;
-}
+type term = plain_term loc
+
 and plain_term =
   | Var of variable
-  (** variables *)
   | Const of Const.t
-  (** integers, booleans, ... *)
   | Tuple of term list
-  (** [(t1, t2, ..., tn)] *)
   | Lambda of abstraction
-  (** [fun p -> t] *)
   | Apply of term * term
-  (** [t1 t2] *)
+  | Conditional of term * term * term
   | Perform of effect * term
-  (** [perform E t] *)
   | Match of term * cases
-  (** [match t1 with t2] *)
+  | Let of pattern * term * term
   | Constraint of term * ty
-  (** [(t : ty)] *)
 
 and cases = {
   effects : (effect, abstraction2) Map.t;

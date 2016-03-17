@@ -14,6 +14,7 @@
     ("true", BOOL true);
     ("with", WITH)
   ]
+  let reserved = Map.of_list reserved
 
   let escaped_characters = [
     ("\"", "\"");
@@ -25,15 +26,6 @@
     ("r", "\r");
     (" ", " ");
   ]
-
-let bigint_of_string s =
-  (* get rid of _ *)
-  let j = ref 0 in
-  for i = 0 to String.length s - 1 do
-    if s.[i] <> '_' then (s.[!j] <- s.[i]; incr j)
-  done;
-  Big_int.big_int_of_string (String.sub s 0 !j)
-
 }
 
 let lname = ( ['a'-'z'] ['_' 'a'-'z' 'A'-'Z' '0'-'9' '\'']*
@@ -68,59 +60,37 @@ rule token = parse
   | '\n'                { Lexing.new_line lexbuf; token lexbuf }
   | [' ' '\r' '\t']     { token lexbuf }
   | "(*"                { comment 0 lexbuf }
-  | int                 { INT (bigint_of_string (Lexing.lexeme lexbuf)) }
+  | int                 { INT (int_of_string (Lexing.lexeme lexbuf)) }
   | xxxint              { try
-                            INT (Big_int.big_int_of_int (int_of_string (Lexing.lexeme lexbuf)))
+                            INT (int_of_string (Lexing.lexeme lexbuf))
                           with Failure _ -> Error.syntax ~loc:(Location.of_lexeme lexbuf) "Invalid integer constant"
                         }
-  | float               { FLOAT (float_of_string(Lexing.lexeme lexbuf)) }
   | '"'                 { STRING (string "" lexbuf) }
   | lname               { let s = Lexing.lexeme lexbuf in
-                            match Common.lookup s reserved with
+                            match Map.lookup s reserved with
                               | Some t -> t
-                              | None ->
-                                  begin match Common.lookup s directives with
-                                    | Some d -> d
-                                    | None -> LNAME s
-                                  end
+                              | None -> LNAME s
                         }
-  | uname               { UNAME (Lexing.lexeme lexbuf) }
   | '\'' lname          { let str = Lexing.lexeme lexbuf in
                           PARAM (String.sub str 1 (String.length str - 1)) }
   | "\'~"               { PARAM ("~") }
   | '_'                 { UNDERSCORE }
   | '('                 { LPAREN }
   | ')'                 { RPAREN }
-  | '['                 { LBRACK }
-  | ']'                 { RBRACK }
-  | '{'                 { LBRACE }
-  | '}'                 { RBRACE }
-  | "::"                { CONS }
-  | '#'                 { HASH }
   | ':'                 { COLON }
   | ','                 { COMMA }
   | '|'                 { BAR }
-  | "||"                { BARBAR }
   | ";;"                { SEMISEMI }
   | ';'                 { SEMI }
+  | "-["                { LARROW }
+  | "]->"               { RARROW }
   | "->"                { ARROW }
-  | "=>"                { HARROW }
+  | "=>"                { PUREARROW }
+  | "~>"                { TILDEARROW }
   | '='                 { EQUAL }
   | '*'                 { STAR }
   | '+'                 { PLUS }
   | '-'                 { MINUS }
-  | "-."                { MINUSDOT }
-  | '@'                 { AT }
-  | '&'                 { AMPER }
-  | "&&"                { AMPERAMPER }
-  | prefixop            { PREFIXOP(Lexing.lexeme lexbuf) }
-  | ":="                { INFIXOP0(":=") }
-  | infixop0            { INFIXOP0(Lexing.lexeme lexbuf) }
-  | infixop1            { INFIXOP1(Lexing.lexeme lexbuf) }
-  | infixop2            { INFIXOP2(Lexing.lexeme lexbuf) }
-  (* infixop4 comes before infixop3 because ** would otherwise match infixop3 *)
-  | infixop4            { INFIXOP4(Lexing.lexeme lexbuf) }
-  | infixop3            { INFIXOP3(Lexing.lexeme lexbuf) }
   | eof                 { EOF }
 
 and comment n = parse

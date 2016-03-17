@@ -5,7 +5,6 @@ type t = private
   | Integer of int
   | String of string
   | Boolean of bool
-  | Float of float
 
 (** Print a constant. *)
 val print : t -> Format.formatter -> unit
@@ -18,7 +17,3 @@ val of_string : string -> t
 
 (** Create a constant from a boolean. *)
 val of_boolean : bool -> t
-
-(** Create a constant from a float. *)
-val of_float : float -> t
-

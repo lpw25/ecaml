@@ -3,7 +3,7 @@ open Syntax
 exception PatternMatch
 
 let rec extend_with_pattern p v env =
-  match p.pattern, v with
+  match p.plain, v with
   | Nonbinding, _ -> env
   | Var x, v -> Map.update x v env
   | Const c, Value.Const c' when c = c' -> env
@@ -30,7 +30,7 @@ let rec sequence r k =
     Value.Perform (eff, param, fun x -> sequence (k' x) k)
 
 let rec eval env t =
-  match t.term with
+  match t.plain with
   | Var x ->
     begin match Map.lookup x env with
       | None -> Error.runtime ~loc:t.location "Unknown identifier."
