@@ -1,12 +1,12 @@
 (** Abstract syntax of ecaml terms and types. *)
 
 (** Symbols *)
-type variable = string   (** variable identifiers *)
-type effect = string     (** effect symbols *)
-type label = string      (** variant labels *)
-type tyname = string     (** type names *)
-type typaram = string    (** type parameters *)
-type rowparam = string   (** row parameters *)
+type variable   (** variable identifiers *)
+type effect     (** effect symbols *)
+type label      (** variant labels *)
+type tyname     (** type names *)
+type typaram    (** type parameters *)
+type rowparam   (** row parameters *)
 
 (** Types *)
 type dirt = {
