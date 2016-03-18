@@ -48,7 +48,13 @@ let rec eval env t =
     sequence (eval env t1) (fun v1 ->
         match v1 with
         | Value.Closure f -> sequence (eval env t2) f
-        | _ -> Error.runtime ~loc:t.location "A closure expected."
+        | _ -> Error.runtime ~loc:t1.location "A function expected in application."
+      )
+  | Conditional (t_if, t_then, t_else) ->
+    sequence (eval env t_if) (fun v ->
+        match v with
+        | Value.Const (Const.Boolean b) -> eval env (if b then t_then else t_else)
+        | _ -> Error.runtime ~loc:t_if.location "A boolean expected in conditional."
       )
   | Perform (eff, param) ->
     sequence (eval env param) (fun v ->
@@ -64,6 +70,9 @@ let rec eval env t =
         end
     in
     h (eval env t)
+  | Let (p, t1, t2) ->
+    sequence (eval env t1) (eval_abstraction env (p, t2))
+  | Constraint (t, _) -> eval env t
 
 and eval_abstraction env (p, t) =
   fun v -> eval (extend env p v) t
