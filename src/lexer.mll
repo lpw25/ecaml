@@ -4,6 +4,7 @@
   let reserved = [
     ("effect", EFFECT);
     ("else", ELSE);
+    ("end", END);
     ("false", BOOL false);
     ("fun", FUN);
     ("if", IF);
