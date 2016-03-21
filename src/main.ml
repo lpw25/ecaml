@@ -22,10 +22,11 @@ let toplevel () =
     while true do
       try
         let cmd = Lexer.read_toplevel (parse Parser.commandline) () in
+        let ty = Typecheck.infer Typecheck.empty cmd in
         let result = Eval.eval Map.empty cmd in
           match result with
           | Value.Value v ->
-              Format.printf "- : ? = %t@." (Value.print v)
+              Format.printf "- : %a = %t@." Typecheck.print ty (Value.print v)
           | Value.Perform(eff, _, _) ->
               Format.printf "Unhandled effect: %s@." (eff :> string)
       with
