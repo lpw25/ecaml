@@ -229,6 +229,9 @@ let rec extend_env loc (env : env) exp pat = match pat.plain with
 
 let pure : dirt = { operations = []; row = None }
 
+let extend_poly_env ~loc env ty pat =
+  generalise (extend_env loc (Marker env) ty pat)
+
 let rec infer env t = match t.plain with
   | Var v -> instantiate (lookup t.location v env)
   | Const k -> type_of_const k
@@ -258,7 +261,8 @@ let rec infer env t = match t.plain with
        unify t.location res (infer (extend_env t.location env ts pat) t));
      res
   | Let (pat, t, body) ->
-     infer (generalise (extend_env t.location (Marker env) (infer env t) pat)) body
+     let env = extend_poly_env ~loc:t.location env (infer env t) pat in
+     infer env body
   | Constraint (term, ty) ->
      let ty' = infer env term in
      unify t.location ty' (of_ty (ref []) ty);
