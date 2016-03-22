@@ -47,19 +47,42 @@
 %left  STAR
 
 %start <Syntax.plain_pattern> plain_simple_pattern
-%start <Syntax.term> commandline
+%start <Syntax.toplevel list> file
+%start <Syntax.toplevel> commandline
 
 %%
 
 (* Toplevel syntax *)
 
-(* If you're going to "optimize" this, please make sure we don't require;; at the
-   end of the file. *)
+file:
+  | lst = file_topdef
+    { lst }
+  | t = topterm EOF
+     { [t] }
+  | t = topterm SEMISEMI lst = file
+     { t :: lst }
+
+file_topdef:
+  | EOF
+     { [] }
+  | def = topdef SEMISEMI lst = file
+     { def :: lst }
+  | def = topdef lst = file_topdef
+     { def :: lst }
+
 commandline:
-  | t = term SEMISEMI
+  | def = topdef SEMISEMI
+    { def }
+  | t = topterm SEMISEMI
     { t }
-  | t = term EOF
-    { t }
+
+topdef:
+  | LET def = let_def
+    { Let (fst def, snd def) }
+
+topterm:
+  | t = term
+    { Term t }
 
 (* Main syntax tree *)
 

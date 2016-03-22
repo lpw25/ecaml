@@ -72,3 +72,8 @@ and cases = {
 and abstraction = pattern * term
 
 and abstraction2 = pattern * pattern * term
+
+(** Toplevel commands *)
+type toplevel =
+  | Term of term
+  | Let of pattern * term
