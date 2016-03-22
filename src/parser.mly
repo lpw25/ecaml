@@ -245,7 +245,7 @@ mark_position(PLAIN):
 
 ty: mark_position(plain_ty) {$1}
 plain_ty:
-  | t1 = prod_ty RARROW d = dirt LARROW t2 = ty
+  | t1 = prod_ty LARROW d = dirt RARROW t2 = ty
     { TyArrow (t1, t2, d) }
   | t1 = prod_ty ARROW t2 = ty
     { TyArrow (t1, t2, io_dirt) }
