@@ -47,6 +47,10 @@ let run_command env = function
             env
         end
 
+let run_file env filename =
+  let cmds = Lexer.read_file (parse Parser.file) filename in
+  List.fold_left run_command env cmds
+
 let rec toplevel env =
     let env = try
       let cmd = Lexer.read_toplevel (parse Parser.commandline) () in
@@ -57,16 +61,28 @@ let rec toplevel env =
     in
     toplevel env
 
+let options = Arg.align []
+
+let files_to_load = ref []
+
+let anonymous arg = files_to_load := arg :: !files_to_load
+
+let usage = "main.native [file] ..."
+
 (* Main program *)
 let main =
   Sys.catch_break true;
+  Arg.parse options anonymous usage;
   Format.printf "    ______ ______                   __@.";
   Format.printf "   / ____// ____/____ _ ____ ___   / /@.";
   Format.printf "  / __/  / /    / __ `// __ `__ \\ / /@.";
   Format.printf " / /___ / /___ / /_/ // / / / / // /@.";
   Format.printf "/_____/ \\____/ \\__,_//_/ /_/ /_//_/@.";
   Format.printf "@.";
+
+  let env = List.fold_left run_file initial (List.rev !files_to_load) in
+
   try
-    toplevel initial
+    toplevel env
   with
     | End_of_file -> Format.printf "Goodbye!@."
