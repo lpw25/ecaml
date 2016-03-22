@@ -12,5 +12,5 @@ and closure = value -> result
 let rec print v ppf =
   match v with
   | Const c -> Const.print c ppf
-  | Tuple vs -> Print.print ppf "(@[<hov>%t@])" (Print.sequence "," print vs)
+  | Tuple vs -> Print.print ppf "(@[<hov>%t@])" (Print.sequence ", " print vs)
   | Closure _ -> Print.print ppf "<fun>"
