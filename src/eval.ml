@@ -42,7 +42,7 @@ let rec eval env t =
       fun vs ->
         sequence (eval env t) (fun v -> k (v :: vs))
     in
-    List.fold_right fold ts (fun vs -> Value.Value (Value.Tuple vs)) []
+    List.fold_right fold ts (fun vs -> Value.Value (Value.Tuple (List.rev vs))) []
   | Lambda a -> Value.Value (Value.Closure (eval_abstraction env a))
   | Apply (t1, t2) ->
     sequence (eval env t1) (fun v1 ->
