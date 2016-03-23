@@ -13,7 +13,8 @@
     ("match", MATCH);
     ("then", THEN);
     ("true", BOOL true);
-    ("with", WITH)
+    ("with", WITH);
+    ("perform", PERFORM);
   ]
   let reserved = Map.of_list reserved
 

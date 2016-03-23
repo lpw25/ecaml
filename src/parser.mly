@@ -39,6 +39,7 @@
 %token LET IN
 %token FUN BAR
 %token IF THEN ELSE
+%token PERFORM
 %token EOF
 
 %nonassoc IN ARROW
@@ -136,6 +137,8 @@ plain_app_term:
       let ap = List.fold_left apply t ts in
         ap.plain
     }
+  | PERFORM e = effect t = simple_term
+    { Perform(e, t) }
   | t = plain_simple_term
     { t }
 
