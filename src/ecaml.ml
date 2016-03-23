@@ -71,7 +71,7 @@ let files_to_load = ref []
 
 let anonymous arg = files_to_load := arg :: !files_to_load
 
-let usage = "main.native [file] ..."
+let usage = "ecaml.native [file] ..."
 
 (* Main program *)
 let main =

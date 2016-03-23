@@ -22,12 +22,9 @@ then
     PRINTF="echo"
 fi
 
-if [ -x "$BASEDIR/../main.native" ]
+if [ -x "$BASEDIR/../ecaml.native" ]
 then
-    ECAML="$BASEDIR/../main.native"
-elif [ -x "$BASEDIR/../main.byte" ]
-then
-    ECAML="$BASEDIR/../main.byte"
+    ECAML="$BASEDIR/../ecaml.native"
 else
     echo "Cannot find the ECaml executable. Compile ECaml first."
     exit 1
