@@ -1,0 +1,9 @@
+- : int = 12345
+- : boolean = true
+- : string = "She said: \"Hello, world!\""
+- : (int, (boolean, string)) = (12345, (true, "She said: \"Hello, world!\""))
+- : 'a -[?]-> 'b -[?]-> ('b, 'a) = <fun>
+- : 'a -[?]-> ('a, (int, (boolean, string))) = <fun>
+- : int = 10
+- : int = 5
+- : 'a -[?]-> 'a = <fun>

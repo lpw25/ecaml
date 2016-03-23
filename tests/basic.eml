@@ -1,0 +1,27 @@
+let n = 12345
+let b = true
+let s = "She said: \"Hello, world!\""
+let tuple = (n, (b, s))
+let f = fun x y -> (y, x)
+
+;;
+
+f tuple
+
+;;
+
+if b then 10 else 20 end
+
+;;
+
+match (3, 5) with
+| (3, 6) -> 10
+| (5, 5) -> 20
+| (x, 5) -> x
+| (3, y) -> y
+end
+
+;;
+
+let id = fun x -> x in
+id id id id
