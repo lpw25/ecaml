@@ -10,3 +10,7 @@ let update k v dict =
   (k, v) :: dict
 
 let of_list x = x
+
+let iter f = List.iter (fun (x,y) -> f x y)
+
+let keys x = List.map (fun (x, y) -> x) x

@@ -23,21 +23,25 @@ let initial = {
 (* Interactive toplevel *)
 let run_command env = function
   | Syntax.Term t ->
-      let ty = Typecheck.infer env.typecheck t in
+      let ty_and_dirt = Typecheck.infer env.typecheck t in
       let result = Eval.eval env.eval t in
         begin match result with
         | Value.Value v ->
-            Format.printf "- : %a = %t@." Typecheck.print ty (Value.print v)
+            Format.printf "- : %a = %t@." 
+              Typecheck.print_type_and_effect ty_and_dirt
+              (Value.print v)
         | Value.Perform(eff, _, _) ->
             Format.printf "Unhandled effect: %s@." (eff :> string)
         end;
       env
   | Syntax.Let (pat, t) ->
-      let ty = Typecheck.infer env.typecheck t in
+      let (ty, dirt) as ty_and_dirt = Typecheck.infer env.typecheck t in
       let result = Eval.eval env.eval t in
         begin match result with
         | Value.Value v ->
-            Format.printf "- : %a = %t@." Typecheck.print ty (Value.print v);
+            Format.printf "- : %a = %t@."
+              Typecheck.print_type_and_effect ty_and_dirt
+              (Value.print v);
             {
               typecheck = Typecheck.extend_poly_env ~loc:t.location env.typecheck ty pat;
               eval = Eval.extend env.eval pat v

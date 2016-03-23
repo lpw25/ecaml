@@ -2,11 +2,13 @@
 type env
 val empty : env
 
-(* Unification variables representing types *)
+(* Unification variables representing types and dirt *)
 type tyvar
-val print : Format.formatter -> tyvar -> unit
+type dirtvar
+val print_type_and_effect : Format.formatter -> (tyvar * dirtvar) -> unit
+
 
 (* Type inference *)
-val infer : env -> Syntax.term -> tyvar
-
 val extend_poly_env : loc:Location.t -> env -> tyvar -> Syntax.pattern -> env
+val infer : env -> Syntax.term -> (tyvar * dirtvar)
+
