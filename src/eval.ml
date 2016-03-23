@@ -16,13 +16,6 @@ let extend env p v =
   with
     PatternMatch -> Error.runtime ~loc:p.location "Pattern match failure."
 
-let rec extend_with_cases ~loc env cases v =
-  match cases with
-  | [] -> Error.runtime ~loc "No branches succeeded in a pattern match."
-  | (p, t) :: cases ->
-    try extend_with_pattern p v env
-    with PatternMatch -> extend_with_cases ~loc env cases v
-
 let rec sequence r k =
   match r with
   | Value.Value v -> k v
@@ -61,7 +54,7 @@ let rec eval env t =
         Value.Perform (eff, v, fun x -> Value.Value x))
   | Match (t, {effects; values}) ->
     let rec h = function
-      | Value.Value v -> eval (extend_with_cases ~loc:t.location env values v) t
+      | Value.Value v -> eval_cases ~loc:t.location env values v
       | Value.Perform (eff, v, k) ->
         let k' u = h (k u) in
         begin match Map.lookup eff effects with
@@ -79,3 +72,11 @@ and eval_abstraction env (p, t) =
 
 and eval_abstraction2 env (p1, p2, t) =
   fun v1 -> fun v2 -> eval (extend (extend env p1 v1) p2 v2) t
+
+and eval_cases ~loc env cases v =
+  match cases with
+  | [] -> Error.runtime ~loc "No branches succeeded in a pattern match."
+  | (p, t) :: cases ->
+    try eval (extend_with_pattern p v env) t
+    with PatternMatch -> eval_cases ~loc env cases v
+
