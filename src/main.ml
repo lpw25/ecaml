@@ -61,7 +61,11 @@ let rec toplevel env =
     in
     toplevel env
 
-let options = Arg.align []
+let options = Arg.align [
+  ("-n",
+    Arg.Clear Config.run_interactive_toplevel,
+    " Do not run the interactive toplevel");
+]
 
 let files_to_load = ref []
 
@@ -73,16 +77,17 @@ let usage = "main.native [file] ..."
 let main =
   Sys.catch_break true;
   Arg.parse options anonymous usage;
-  Format.printf "    ______ ______                   __@.";
-  Format.printf "   / ____// ____/____ _ ____ ___   / /@.";
-  Format.printf "  / __/  / /    / __ `// __ `__ \\ / /@.";
-  Format.printf " / /___ / /___ / /_/ // / / / / // /@.";
-  Format.printf "/_____/ \\____/ \\__,_//_/ /_/ /_//_/@.";
-  Format.printf "@.";
-
   let env = List.fold_left run_file initial (List.rev !files_to_load) in
-
-  try
-    toplevel env
-  with
-    | End_of_file -> Format.printf "Goodbye!@."
+  if !Config.run_interactive_toplevel then
+  begin
+    Format.printf "    ______ ______                   __@.";
+    Format.printf "   / ____// ____/____ _ ____ ___   / /@.";
+    Format.printf "  / __/  / /    / __ `// __ `__ \\ / /@.";
+    Format.printf " / /___ / /___ / /_/ // / / / / // /@.";
+    Format.printf "/_____/ \\____/ \\__,_//_/ /_/ /_//_/@.";
+    Format.printf "@.";
+    try
+      toplevel env
+    with
+      | End_of_file -> Format.printf "Goodbye!@."
+  end
